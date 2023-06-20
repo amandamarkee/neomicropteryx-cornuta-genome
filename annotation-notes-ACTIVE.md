@@ -38,6 +38,35 @@ long-read isoseq
 ```
 
 ## Step 1 Feature Annotation – Running with protein sequences
+## (a) Run [ProtHint](https://github.com/gatech-genemark/ProtHint#protein-database-preparation) to create protein gff file
+
+Here, I will run ProtHint on the following file containing sequence data for arthropod protein sequences found within the OrthoDBv11 database:
+```
+sbatch -J Nc_ProtHint prothint.sh /blue/kawahara/yimingweng/LepidoPhylo_Project/annotations/IsoSeq/Neomicropteryx_cornuta/Neomicropteryx_cornuta_softmasked.fasta /blue/kawahara/yimingweng/LepidoPhylo_Project/OrthoDBv11/Arthropoda.fasta
+```
+
+Script for running ProtHint using a SLURM submission:
+```
+#!/bin/bash
+#SBATCH --job-name=%x_%j
+#SBATCH --output=%x_%j.log
+#SBATCH --mail-user=amanda.markee@ufl.edu
+#SBATCH --mail-type=FAIL,END
+#SBATCH --mem-per-cpu=4gb
+#SBATCH --time=24:00:00
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+
+dates;hostname;pwd
+
+genome=${1}
+protein=${2}
+
+module load prothint/2.6.0
+module load genemark_es/4.69
+
+prothint.py --threads ${SLURM_CPUS_ON_NODE:-1} ${genome} ${protein}
+```
 
 
 ## Step 2 Feature Annotation – Running with IsoSeq (long-read) data
