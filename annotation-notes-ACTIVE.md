@@ -68,6 +68,35 @@ module load genemark_es/4.69
 prothint.py --threads ${SLURM_CPUS_ON_NODE:-1} ${genome} ${protein}
 ```
 
+## (b) Run BRAKER2 with protein evidence
+
+Now that the ProtHint .gff file is completed, we can use this as protein evidence for runnning BRAKER2. Use the following command to execute the code below it.
+
+```
+sbatch -J Nc_prot_braker2 Nc_braker2_protein.sh /blue/kawahara/yimingweng/LepidoPhylo_Project/annotations/Neomicropteryx_cornuta/Neomicropteryx_cornuta_softmasked.fasta /blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/prothint/prothint_augustus.gff Neomicropteryx_cornuta
+```
+```
+#!/bin/bash
+#SBATCH --job-name=%j_Nc_braker2_prot
+#SBATCH --output=%j_Nc_braker2_prot.log
+#SBATCH --mail-user=amanda.markee@ufl.edu
+#SBATCH --mail-type=FAIL,END
+#SBATCH --mem-per-cpu=8gb
+#SBATCH --time=96:00:00
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=32
+
+genome=${1}
+protein_gff=${2}
+species=${3}
+
+module load conda
+module load braker/2.1.6
+
+braker.pl \
+--AUGUSTUS_CONFIG_PATH=/blue/kawahara/amanda.markee/neomicropteryx_annotation/Augustus/config \
+--genome=${genome} --species ${species} --hints=${protein_gff} --softmasking --gff3 --cores 32 --AUGUSTUS_ab_initio
+```
 
 ## Step 2 Feature Annotation – Running with IsoSeq (long-read) data
 
