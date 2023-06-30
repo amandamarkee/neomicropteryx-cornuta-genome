@@ -28,7 +28,7 @@ Input files for BRAKER2:
 Directories for each input file:
 ```
 soft-masked genome
-/blue/kawahara/yimingweng/LepidoPhylo_Project/annotations/Neomicropteryx_cornuta/Neomicropteryx_cornuta_softmasked.fasta
+/blue/kawahara/yimingweng/LepidoPhylo_Project/annotations/IsoSeq/Neomicropteryx_cornuta/Neomicropteryx_cornuta_softmasked.fasta
 
 protein database
 /blue/kawahara/yimingweng/LepidoPhylo_Project/OrthoDBv11/Arthropoda.fasta
@@ -73,7 +73,7 @@ prothint.py --threads ${SLURM_CPUS_ON_NODE:-1} ${genome} ${protein}
 Now that the ProtHint .gff file is completed, we can use this as protein evidence for runnning BRAKER2. Use the following command to execute the code below it.
 
 ```
-sbatch -J Nc_prot_braker2 Nc_braker2_protein.sh /blue/kawahara/yimingweng/LepidoPhylo_Project/annotations/Neomicropteryx_cornuta/Neomicropteryx_cornuta_softmasked.fasta /blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/prothint/prothint_augustus.gff Neomicropteryx_cornuta
+sbatch -J Nc_prot_braker2 Nc_braker2_protein.sh /blue/kawahara/yimingweng/LepidoPhylo_Project/annotations/IsoSeq/Neomicropteryx_cornuta/Neomicropteryx_cornuta_softmasked.fasta /blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/prothint/prothint_augustus.gff Neomicropteryx_cornuta
 ```
 ```
 #!/bin/bash
