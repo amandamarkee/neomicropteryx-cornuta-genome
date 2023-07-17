@@ -98,6 +98,42 @@ braker.pl \
 --genome=${genome} --species ${species} --hints=${protein_gff} --softmasking --gff3 --cores 32 --AUGUSTUS_ab_initio
 ```
 
+I am getting errors regarding the format of the input files, based on a HPG help-desk ticket I submitted. See error below:
+```
+/tmp/slurmd/job1519100/slurm_script: line 10: dates: command not found
+c0703a-s5.ufhpc
+/blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot
+
+The following have been reloaded with a version change:
+  1) braker/3.0.3 => braker/2.1.6
+
+# Mon Jul  3 09:29:49 2023: Log information is stored in file /blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/braker/braker.log
+#*********
+# WARNING: Detected whitespace in fasta header of file /blue/kawahara/yimingweng/LepidoPhylo_Project/annotations/IsoSeq/Neomicropteryx_cornuta/Neomicropteryx_cornuta_softmasked.fasta. This may later on cause problems! The pipeline will create a new file without spaces or "|" characters and a genome_header.map file to look up the old and new headers. This message will be suppressed from now on!
+#*********
+ERROR in file /apps/braker/2.1.6/bin/braker.pl at line 6739
+Failed to execute: perl /apps/genemark/genemark-es/current/gmes_petap.pl --verbose --seq /blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/braker/genome.fa --EP /blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/braker/genemark_hintsfile.gff --cores=32  --gc_donor 0.001 --evidence /blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/braker/genemark_evidence.gff  --soft_mask auto 1>/blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/braker/GeneMark-EP.stdout 2>/blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/braker/errors/GeneMark-EP.stderr
+Failed to execute: perl /apps/genemark/genemark-es/current/gmes_petap.pl --verbose --seq /blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/braker/genome.fa --EP /blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/braker/genemark_hintsfile.gff --cores=32  --gc_donor 0.001 --evidence /blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/braker/genemark_evidence.gff  --soft_mask auto 1>/blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/braker/GeneMark-EP.stdout 2>/blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/braker/errors/GeneMark-EP.stderr
+```
+
+The first step to troubleshooting this is to remove all whitespaces in the softmasked genome, and try re-running. I first copy over YiMing's softmasked genome to my directory using this command:
+```
+cp /blue/kawahara/yimingweng/LepidoPhylo_Project/annotations/IsoSeq/Neomicropteryx_cornuta/Neomicropteryx_cornuta_softmasked.fasta /blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot
+```
+
+Then use the following awk command to remove whitespaces:
+```
+sed 's, ,_,g'  Neomicropteryx_cornuta_softmasked.fasta >nospace_Neomicropteryx_cornuta_softmasked.fasta
+```
+
+Then try rerunning the protein braker script above using this code:
+```
+sbatch -J Nc_prot_braker2 Nc_braker2_protein.sh /blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/nospace_Neomicropteryx_cornuta_softmasked.fasta /blue/kawahara/amanda.markee/neomicropteryx_annotation/braker2/braker_prot/prothint/prothint_augustus.gff Neomicropteryx_cornuta
+```
+
+Rerunning still gave me the same error, so I now need to remove spaces in the OrthoDB protein fasta I'm using as evidence, prior to running ProtHint. (Note: this part actually doesnt make sense to me because the names in the OrthoDB database are not just Neomicropteryx, they are all arthropods. I will check with YiMing about this before continuing.. 
+
+
 ## Step 2 Feature Annotation – Running with IsoSeq (long-read) data
 
 
